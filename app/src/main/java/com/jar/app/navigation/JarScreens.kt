@@ -6,5 +6,7 @@ enum class JarScreens {
     ProfileScreen,
     SigninScreen,
     SignupScreen,
-    InvestScreen
+    InvestScreen,
+    TransactionScreen,
+    NekScreen
 }

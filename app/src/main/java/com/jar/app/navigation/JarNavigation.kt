@@ -17,8 +17,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.compose.ui.Modifier
+import com.jar.app.ui.auth.SignInScreen
+import com.jar.app.ui.auth.SignUpScreen
+import com.jar.app.ui.home.HomeScreen
 import com.jar.app.ui.home.JarViewModel
+import com.jar.app.ui.nek.NekScreen
+import com.jar.app.ui.profile.ProfileScreen
 import com.jar.app.ui.splash.SplashScreen
+import com.jar.app.ui.transactions.TransactionsScreen
 
 @Composable
 fun JarNavigation(viewModel: JarViewModel = hiltViewModel()){
@@ -33,8 +39,29 @@ fun JarNavigation(viewModel: JarViewModel = hiltViewModel()){
             SplashScreen(navController)
         }
 
+        composable(route = JarScreens.SigninScreen.name) {
+            SignInScreen(navController)
+        }
+
+        composable(route = JarScreens.SignupScreen.name) {
+            SignUpScreen(navController)
+        }
+
+        composable(route = JarScreens.HomeScreen.name) {
+            HomeScreen(navController)
+        }
+
+        composable(route = JarScreens.ProfileScreen.name) {
+            ProfileScreen(navController)
+        }
+
+        composable(route = JarScreens.NekScreen.name) {
+            NekScreen(navController)
+        }
+
+        composable(route = JarScreens.TransactionScreen.name) {
+            TransactionsScreen(navController)
+        }
 
     }
-
-
 }

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-parcelize")
+    id("com.google.dagger.hilt.android")
     alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler)
     id("com.google.gms.google-services")
@@ -61,6 +62,8 @@ dependencies {
     implementation("com.google.firebase:firebase-auth:23.1.0")
     // firebase firestore
     implementation("com.google.firebase:firebase-firestore:25.1.1")
+    // firebase google-signIn
+    implementation ("com.google.android.gms:play-services-auth:21.0.0")
 
     // retrofit
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
