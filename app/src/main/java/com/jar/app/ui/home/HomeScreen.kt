@@ -1,5 +1,6 @@
 package com.jar.app.ui.home
 
+import android.net.Uri
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -82,6 +83,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.jar.app.R
 import com.jar.app.model.YoutubeVideoResponse.YoutubeVideoItems
+import com.jar.app.navigation.JarScreens
 import com.jar.app.ui.theme.Dark_Purple
 import com.jar.app.ui.theme.Purple80
 import com.jar.app.widgets.ShimmerVideoCard
@@ -277,7 +279,9 @@ fun UserSuccessStories(
             val video = videoItems[index]
             if (video != null && video.id.videoId != null) {
                 VideoThumbnail(video = video) {
-                    navController.navigate("videoPlayer/${video.id.videoId}")
+                    val encodedTitle = Uri.encode(video.snippet.title)
+                    navController.navigate("${JarScreens.VideoPlayerScreen.name}/${video.id.videoId}/$encodedTitle")
+
                 }
             }
         }
@@ -296,8 +300,6 @@ fun UserSuccessStories(
                     )
                 }
             }
-
-
     }
     
 }
@@ -306,11 +308,12 @@ fun UserSuccessStories(
 fun VideoThumbnail(video: YoutubeVideoItems, onClick: () -> Unit) {
     Card(
         modifier = Modifier
-            .width(180.dp)
-            .height(140.dp)
-            .clickable{ onClick() },
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+            .width(240.dp)
+            .height(160.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(0.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(Color.White.copy(alpha = 0.15f))
     ) {
         Column {
             AsyncImage(
@@ -325,7 +328,7 @@ fun VideoThumbnail(video: YoutubeVideoItems, onClick: () -> Unit) {
                 text = video.snippet.title,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(6.dp)
+                modifier = Modifier.padding(6.dp),
             )
         }
     }

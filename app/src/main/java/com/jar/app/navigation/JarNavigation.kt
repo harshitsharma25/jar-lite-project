@@ -3,9 +3,12 @@ package com.jar.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.jar.app.ui.VideoPlayerScreen
 import com.jar.app.ui.auth.SignInScreen
 import com.jar.app.ui.auth.SignUpScreen
 import com.jar.app.ui.home.HomeScreen
@@ -26,6 +29,18 @@ fun JarNavigation(viewModel: HomeScreenViewModel = hiltViewModel()){
     ) {
         composable(route = JarScreens.SplashScreen.name) {
             SplashScreen(navController)
+        }
+
+        composable(
+            route = "${JarScreens.VideoPlayerScreen.name}/{videoId}/{videoTitle}",
+            arguments = listOf(
+                navArgument("videoId") { type = NavType.StringType },
+                navArgument("videoTitle") { type = NavType.StringType },
+            )
+        ) { backStackEntry ->
+            val videoId = backStackEntry.arguments?.getString("videoId") ?: ""
+            val videoTitle = backStackEntry.arguments?.getString("videoTitle") ?: "Video"
+            VideoPlayerScreen(videoId, videoTitle, navController)
         }
 
         composable(route = JarScreens.SigninScreen.name) {

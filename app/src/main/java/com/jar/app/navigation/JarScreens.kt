@@ -8,5 +8,6 @@ enum class JarScreens {
     SignupScreen,
     InvestScreen,
     TransactionScreen,
-    NekScreen
+    NekScreen,
+    VideoPlayerScreen
 }
