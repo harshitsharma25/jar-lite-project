@@ -1,3 +1,13 @@
+import java.io.FileInputStream
+import java.util.Properties
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        load(FileInputStream(localPropertiesFile))
+    }
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -7,6 +17,9 @@ plugins {
     alias(libs.plugins.compose.compiler)
     id("com.google.gms.google-services")
 }
+
+val youtubeApiKey = localProperties["YOUTUBE_API_KEY"]?.toString() ?: ""
+
 
 android {
     namespace = "com.jar.app"
@@ -23,6 +36,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "YOUTUBE_API_KEY", "\"$youtubeApiKey\"")
     }
 
     buildTypes {
@@ -43,6 +58,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -93,6 +109,16 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.52")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     ksp("com.google.dagger:hilt-android-compiler:2.52")
+
+    // YouTube Player
+    implementation ("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
+
+    // Paging 3
+    implementation ("androidx.paging:paging-runtime:3.3.0")
+    implementation ("androidx.paging:paging-compose:3.3.0")
+
+    implementation ("com.valentinilk.shimmer:compose-shimmer:1.0.5")
+
 
     implementation("androidx.compose.material:material-icons-extended")
 

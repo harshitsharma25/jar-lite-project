@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -63,6 +65,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -74,9 +77,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import coil.compose.AsyncImage
 import com.jar.app.R
+import com.jar.app.model.YoutubeVideoResponse.YoutubeVideoItems
 import com.jar.app.ui.theme.Dark_Purple
 import com.jar.app.ui.theme.Purple80
+import com.jar.app.widgets.ShimmerVideoCard
 
 
 @Composable
@@ -109,14 +117,16 @@ fun HomeScreen(navController: NavHostController) {
 
             Text(
                 text = "User Success Stories",
-                modifier = Modifier.align(Alignment.Start).padding(start = 12.dp),
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .padding(start = 12.dp),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.ExtraBold // Correct place
             )
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            UserSuccessStories()
+            UserSuccessStories(navController = navController)
 
             RecommendedForYou()
         }
@@ -251,9 +261,76 @@ fun MySavingsData() {
 }
 
 @Composable
-fun UserSuccessStories(){
+fun UserSuccessStories(
+    navController: NavHostController,
+    viewModel: HomeScreenViewModel = hiltViewModel(),
+){
+    val videoItems = viewModel.videos.collectAsLazyPagingItems()
+
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ){
+        items(videoItems.itemCount) { index ->
+            val video = videoItems[index]
+            if (video != null && video.id.videoId != null) {
+                VideoThumbnail(video = video) {
+                    navController.navigate("videoPlayer/${video.id.videoId}")
+                }
+            }
+        }
+
+            if(videoItems.loadState.append is LoadState.Loading){
+                items(3) { ShimmerVideoCard()}
+            }
+
+            if(videoItems.loadState.append is LoadState.Error){
+                item {
+                    val error = (videoItems.loadState.append as LoadState.Error).error
+                    Text(
+                        text = "Failed to load more: ${error.message}",
+                        color = Color.Red,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+
+
+    }
     
 }
+
+@Composable
+fun VideoThumbnail(video: YoutubeVideoItems, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .width(180.dp)
+            .height(140.dp)
+            .clickable{ onClick() },
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column {
+            AsyncImage(
+                model = video.snippet.thumbnails.medium?.url,
+                contentDescription = video.snippet.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+            )
+            Text(
+                text = video.snippet.title,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(6.dp)
+            )
+        }
+    }
+}
+
 
 @Composable
 fun RecommendedForYou(){
