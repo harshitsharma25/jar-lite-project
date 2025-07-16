@@ -10,11 +10,11 @@ import androidx.compose.ui.graphics.Color
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80, // Purple80
     secondary = Dark_Purple, // PurpleGrey80
-    tertiary = LigthGray, // Pink80
+    tertiary = White, // Pink80
     background = Purple80, // Pure black background
-    surface = Purple80, // Dark gray surface
+    surface = Purple80,
     onPrimary = Color.White, // White text on purple
-    onSecondary = Color.Black, // Black text on purple-gray
+    onSecondary = Color.DarkGray, // Black text on purple-gray
     onTertiary = Color.Black, // Black text on pink
     onBackground = Color.White, // White text on black background
     onSurface = Color.Black // Black text on gray surface
