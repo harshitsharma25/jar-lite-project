@@ -17,7 +17,7 @@ private val DarkColorScheme = darkColorScheme(
     onSecondary = Color.DarkGray, // Black text on purple-gray
     onTertiary = Color.Black, // Black text on pink
     onBackground = Color.White, // White text on black background
-    onSurface = Color.Black // Black text on gray surface
+    onSurface = Color.White // Black text on gray surface
 )
 
 private val LightColorScheme = lightColorScheme(

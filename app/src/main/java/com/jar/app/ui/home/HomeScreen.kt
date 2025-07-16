@@ -1,22 +1,30 @@
 package com.jar.app.ui.home
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.FileCopy
@@ -28,6 +36,8 @@ import androidx.compose.material.icons.outlined.FileCopy
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,25 +53,30 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.google.firebase.auth.FirebaseAuth
 import com.jar.app.R
-import com.jar.app.navigation.JarScreens
+import com.jar.app.ui.theme.Dark_Purple
+import com.jar.app.ui.theme.Purple80
 
 
 @Composable
@@ -82,16 +97,239 @@ fun HomeScreen(navController: NavHostController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            verticalArrangement = Arrangement.Center,
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
 
         ) {
-            Text(text = "Welcome to the Home Screen", color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.clickable {
-                    FirebaseAuth.getInstance().signOut()
-                    navController.navigate(JarScreens.SigninScreen.name) })
+            MySavingsData()
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            Text(
+                text = "User Success Stories",
+                modifier = Modifier.align(Alignment.Start).padding(start = 12.dp),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.ExtraBold // Correct place
+            )
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            UserSuccessStories()
+
+            RecommendedForYou()
         }
+    }
+}
+
+@Composable
+fun MySavingsData() {
+    val viewModel : HomeScreenViewModel = hiltViewModel()
+    val userName by viewModel.userName
+
+    // State for gold amount (you can replace this with your actual data source)
+    var goldAmount by remember { mutableStateOf("0.0000g") }
+
+    // Get screen height for 40% calculation
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+    val cardHeight = screenHeight * 0.4f
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(cardHeight)
+            .padding(vertical = 8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Dark_Purple // Using your Dark_Purple for subtle contrast
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 2.dp
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Left side - User info and button
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceAround
+            ) {
+                // User greeting and gold amount
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "Hi $userName",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = Color.White, // Using your White color
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Text(
+                        text = "Gold Purchased",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White.copy(alpha = 0.7f) // Subtle white for secondary text
+                    )
+
+                    Text(
+                        text = goldAmount,
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = Color(0xFFFFD700), // Gold color for the amount
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                // Start Today button
+                AnimatedShineButton(
+                    onClick = {}
+                )
+            }
+
+            // Right side - Gold inspiring banner
+            Card(
+                modifier = Modifier
+                    .size(150.dp, 190.dp)
+                    .padding(start = 16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Purple80.copy(alpha = 0.3f) // Subtle purple background
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    // Gold icon
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(
+                                color = Color(0xFFFFD700), // Gold color for the icon background
+                                shape = CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "🥇",
+                            style = MaterialTheme.typography.headlineLarge
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = "Build Your",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Medium
+                    )
+
+                    Text(
+                        text = "Gold Future",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color(0xFFFFD700), // Gold color for emphasis
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun UserSuccessStories(){
+    
+}
+
+@Composable
+fun RecommendedForYou(){
+
+}
+
+
+@Composable
+fun AnimatedShineButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    text: String = "Start Today"
+) {
+    val Purple80 = Color(0x6F2C002C)
+
+    // Animation state for the shine effect
+    val infiniteTransition = rememberInfiniteTransition(label = "shine")
+
+    val shimmerTranslateAnim by infiniteTransition.animateFloat(
+        initialValue = -1f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = 2000, // 2 seconds for one cycle
+                easing = LinearEasing
+            ),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "shimmer"
+    )
+
+    // Create gradient brush for the shine effect
+    val shimmerBrush = Brush.linearGradient(
+        colors = listOf(
+            Color.Transparent,
+            Color.White.copy(alpha = 0.3f),
+            Color.White.copy(alpha = 0.6f),
+            Color.White.copy(alpha = 0.3f),
+            Color.Transparent
+        ),
+        start = Offset(
+            x = shimmerTranslateAnim * 500f - 200f,
+            y = shimmerTranslateAnim * 200f - 100f
+        ),
+        end = Offset(
+            x = shimmerTranslateAnim * 500f + 200f,
+            y = shimmerTranslateAnim * 200f + 100f
+        )
+    )
+
+    Box(contentAlignment = Alignment.Center,
+        modifier = Modifier.background(
+            brush = shimmerBrush,
+            shape = RoundedCornerShape(12.dp)
+        )
+    )
+    {
+        Button(
+            onClick = onClick,
+            modifier = modifier
+                .fillMaxWidth(0.8f)
+                .height(48.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Purple80
+            ),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+    
+            Text(
+                text = text,
+                color = Color.White,
+                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.bodyLarge
+            )
+            
+           }
     }
 }
 
@@ -328,22 +566,20 @@ fun BottomBarItem(
     }
 }
 
-
 enum class BottomBarTab {
     HOME, JEWELLERY, TRANSACTIONS
 }
 
-
-
 @Composable
-fun HomeScreenFAB(){
+fun HomeScreenFAB() {
     FloatingActionButton(
         onClick = {
             // Handle save instantly action
         },
         modifier = Modifier
             .width(200.dp)
-            .height(56.dp),
+            .height(65.dp)
+            .padding(bottom = 8.dp), // <-- Adds space below FAB
         shape = RoundedCornerShape(28.dp),
         containerColor = Color.Transparent,
         elevation = FloatingActionButtonDefaults.elevation(
@@ -357,8 +593,8 @@ fun HomeScreenFAB(){
                 .background(
                     brush = Brush.horizontalGradient(
                         colors = listOf(
-                            Color(0xFF4B0082), // Purple
-                            Color(0xFF800080)  // Light Purple
+                            Color(0xFF4B0082),
+                            Color(0xFF800080)
                         )
                     ),
                     shape = RoundedCornerShape(28.dp)
@@ -371,9 +607,9 @@ fun HomeScreenFAB(){
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_lightning), // Replace with your lightning icon
+                    painter = painterResource(id = R.drawable.ic_lightning),
                     contentDescription = "Lightning",
-                    tint = Color(0xFFFFD700), // Golden color
+                    tint = Color(0xFFFFD700),
                     modifier = Modifier.size(34.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
