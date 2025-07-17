@@ -13,6 +13,7 @@ import com.jar.app.ui.auth.SignInScreen
 import com.jar.app.ui.auth.SignUpScreen
 import com.jar.app.ui.home.HomeScreen
 import com.jar.app.ui.home.HomeScreenViewModel
+import com.jar.app.ui.invest.InvestScreen
 import com.jar.app.ui.nek.NekScreen
 import com.jar.app.ui.profile.ProfileScreen
 import com.jar.app.ui.splash.SplashScreen
@@ -65,6 +66,9 @@ fun JarNavigation(viewModel: HomeScreenViewModel = hiltViewModel()){
 
         composable(route = JarScreens.TransactionScreen.name) {
             TransactionsScreen(navController)
+        }
+        composable(route = JarScreens.InvestScreen.name) {
+            InvestScreen(navController)
         }
 
     }

@@ -9,6 +9,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -95,13 +96,13 @@ fun HomeScreen(navController: NavHostController) {
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            HomeScreenTopBar()
+            HomeScreenTopBar(navController = navController)
         },
         bottomBar = {
             HomeScreenBottomBar()
         },
         floatingActionButton = {
-            HomeScreenFAB()
+            HomeScreenFAB(navController = navController)
         }
     ) { innerPadding ->
         Column(
@@ -113,7 +114,7 @@ fun HomeScreen(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally,
 
         ) {
-            MySavingsData()
+            MySavingsData(navController = navController)
 
             Spacer(modifier = Modifier.height(28.dp))
 
@@ -130,13 +131,38 @@ fun HomeScreen(navController: NavHostController) {
 
             UserSuccessStories(navController = navController)
 
-            RecommendedForYou()
+            Spacer(modifier = Modifier.height(28.dp))
+
+            Text(
+                text = "Recommended For You",
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .padding(start = 12.dp),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.ExtraBold // Correct place
+            )
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            RecommendedForYou(navController = navController)
+
+            Spacer(modifier = Modifier.height(28.dp))
+            Text(
+                text = "Setup Daily Savings",
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .padding(start = 12.dp),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.ExtraBold // Correct place
+            )
+            Spacer(modifier = Modifier.height(28.dp))
+
         }
     }
 }
 
 @Composable
-fun MySavingsData() {
+fun MySavingsData(navController: NavHostController) {
     val viewModel : HomeScreenViewModel = hiltViewModel()
     val userName by viewModel.userName
 
@@ -202,7 +228,7 @@ fun MySavingsData() {
 
                 // Start Today button
                 AnimatedShineButton(
-                    onClick = {}
+                    onClick = {navController.navigate(JarScreens.InvestScreen.name)}
                 )
             }
 
@@ -336,8 +362,79 @@ fun VideoThumbnail(video: YoutubeVideoItems, onClick: () -> Unit) {
 
 
 @Composable
-fun RecommendedForYou(){
+fun RecommendedForYou(navController: NavHostController){
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .padding(horizontal = 12.dp),
+        elevation = CardDefaults.cardElevation(0.dp),
+        shape = RoundedCornerShape(12.dp),
 
+    ){
+        Box(modifier = Modifier.fillMaxSize()) {
+
+            Image(
+                painter = painterResource(id = R.drawable.saving_gold),
+                contentDescription = "card bg",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+
+            Button(
+                onClick = {
+                    navController.navigate(JarScreens.InvestScreen.name)
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .width(180.dp)
+                    .height(60.dp)
+                    .padding(bottom = 8.dp), // <-- Adds space below FAB
+                shape = RoundedCornerShape(28.dp),
+                colors = ButtonDefaults.buttonColors(Color.Transparent),
+                elevation = ButtonDefaults.elevatedButtonElevation(
+                    defaultElevation = 8.dp,
+                    pressedElevation = 12.dp
+                )
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(
+                                    Color(0xFF4B0082),
+                                    Color(0xFF800080)
+                                )
+                            ),
+                            shape = RoundedCornerShape(28.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 12.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_lightning),
+                            contentDescription = "Lightning",
+                            tint = Color(0xFFFFD700),
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Save Instantly",
+                            color = Color.White,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+            }
+        }
+    }
 }
 
 
@@ -415,7 +512,7 @@ fun AnimatedShineButton(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreenTopBar(){
+fun HomeScreenTopBar(navController: NavHostController){
     var goldPrice  = 234.35  //todo: fetch from the api
 
     TopAppBar(
@@ -432,7 +529,9 @@ fun HomeScreenTopBar(){
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onSecondary),
                     border = BorderStroke(1.dp, Color.Gray),
                     elevation = CardDefaults.cardElevation(0.dp),
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(40.dp).clickable {
+                        navController.navigate(JarScreens.ProfileScreen.name)
+                    }
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -651,10 +750,10 @@ enum class BottomBarTab {
 }
 
 @Composable
-fun HomeScreenFAB() {
+fun HomeScreenFAB(navController: NavHostController) {
     FloatingActionButton(
         onClick = {
-            // Handle save instantly action
+            navController.navigate(JarScreens.InvestScreen.name)
         },
         modifier = Modifier
             .width(200.dp)
