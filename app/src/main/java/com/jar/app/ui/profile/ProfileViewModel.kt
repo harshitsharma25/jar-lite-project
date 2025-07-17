@@ -6,11 +6,13 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.jar.app.model.User
-import com.jar.app.repository.JarRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ProfileViewModel(
+
+@HiltViewModel
+class ProfileViewModel @Inject constructor(
     private val auth : FirebaseAuth,
-    private val repository: JarRepository,
     private val firestore: FirebaseFirestore,
 ): ViewModel() {
 
@@ -33,6 +35,18 @@ class ProfileViewModel(
             }.addOnFailureListener { exception ->
                 println("Get failed with ,$exception")
                 _user.value = null
+            }
+    }
+
+    fun updateField(fieldName : String,value :String){
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        firestore.collection("users")
+            .document(userId)
+            .update(fieldName,value)
+            .addOnSuccessListener {
+                println("Field name $fieldName is updated!!")
+            }.addOnFailureListener {
+                println("Field name $fieldName not updated , some error occured")
             }
     }
 

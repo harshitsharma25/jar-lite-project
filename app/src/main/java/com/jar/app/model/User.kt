@@ -5,5 +5,6 @@ data class User(
     val name : String = "",
     val email : String = "",
     val image : String? = "",  // user's image
-    val mobile : Long? =  0,
+    val mobile : String? = "",
+    val age : String? = ""
 )
