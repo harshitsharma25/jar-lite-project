@@ -1,5 +1,6 @@
 package com.jar.app.data.remote.api
 
+import com.jar.app.model.GoldPriceResponse
 import com.jar.app.model.YoutubeVideoResponse.YoutubeVideoResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -16,4 +17,8 @@ interface ApiService {
         @Query("pageToken") pageToken: String? = null,
         @Query("type") type : String = "video"
     ) : YoutubeVideoResponse
+
+    @GET("XAU/INR")
+    suspend fun getGoldPriceLive() : GoldPriceResponse
+
 }

@@ -44,6 +44,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -85,6 +86,8 @@ import coil.compose.AsyncImage
 import com.jar.app.R
 import com.jar.app.model.YoutubeVideoResponse.YoutubeVideoItems
 import com.jar.app.navigation.JarScreens
+import com.jar.app.ui.goldpricetracker.GoldPriceUiState
+import com.jar.app.ui.goldpricetracker.GoldPriceViewModel
 import com.jar.app.ui.theme.Dark_Purple
 import com.jar.app.ui.theme.Purple80
 import com.jar.app.widgets.ShimmerVideoCard
@@ -512,8 +515,26 @@ fun AnimatedShineButton(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreenTopBar(navController: NavHostController){
-    var goldPrice  = 234.35  //todo: fetch from the api
+fun HomeScreenTopBar(navController: NavHostController,goldPriceViewModel: GoldPriceViewModel = hiltViewModel() ){
+    val goldPriceState = goldPriceViewModel.goldPrice.value
+    var goldPrice by remember {
+        mutableStateOf(0.0)
+    }
+
+    when(goldPriceState){
+        is GoldPriceUiState.Loading -> {
+            CircularProgressIndicator()
+        }
+        is GoldPriceUiState.GoldPriceData -> {
+            goldPrice = goldPriceState.price.price_gram_24k
+        }
+        is GoldPriceUiState.Empty -> {
+            goldPrice = 0.0
+        }
+
+        null -> TODO()
+    }
+
 
     TopAppBar(
         title = {
@@ -529,9 +550,11 @@ fun HomeScreenTopBar(navController: NavHostController){
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onSecondary),
                     border = BorderStroke(1.dp, Color.Gray),
                     elevation = CardDefaults.cardElevation(0.dp),
-                    modifier = Modifier.size(40.dp).clickable {
-                        navController.navigate(JarScreens.ProfileScreen.name)
-                    }
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clickable {
+                            navController.navigate(JarScreens.ProfileScreen.name)
+                        }
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -566,6 +589,7 @@ fun HomeScreenTopBar(navController: NavHostController){
                             .width(150.dp)
                             .height(40.dp) // Optional: define height if you want consistent vertical centering
                             .align(Alignment.CenterVertically)
+                            .clickable { navController.navigate(JarScreens.GoldPriceTrackerScreen.name) }
                     ) {
                         Box(
                             modifier = Modifier.fillMaxSize(),

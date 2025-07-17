@@ -7,7 +7,8 @@ enum class JarScreens {
     SigninScreen,
     SignupScreen,
     InvestScreen,
-    TransactionScreen,
+    TransactionScreen,  // juspay integration
     NekScreen,
-    VideoPlayerScreen
+    VideoPlayerScreen,
+    GoldPriceTrackerScreen
 }

@@ -19,6 +19,7 @@ plugins {
 }
 
 val youtubeApiKey = localProperties["YOUTUBE_API_KEY"]?.toString() ?: ""
+val goldApiKey = localProperties["GOLD_API_KEY"]?.toString() ?: ""
 
 
 android {
@@ -38,6 +39,7 @@ android {
         }
 
         buildConfigField("String", "YOUTUBE_API_KEY", "\"$youtubeApiKey\"")
+        buildConfigField("String", "GOLD_API_KEY", "\"$goldApiKey\"")
     }
 
     buildTypes {
@@ -118,6 +120,10 @@ dependencies {
     implementation ("androidx.paging:paging-compose:3.3.0")
 
     implementation ("com.valentinilk.shimmer:compose-shimmer:1.0.5")
+
+    implementation("com.patrykandpatrick.vico:core:1.13.0") // Core chart library
+    implementation("com.patrykandpatrick.vico:compose:1.13.0") // Compose support
+    implementation("com.patrykandpatrick.vico:compose-m3:1.13.0") // If using Material3
 
 
     implementation("androidx.compose.material:material-icons-extended")

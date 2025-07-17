@@ -1,4 +1,4 @@
-package com.jar.app.ui
+package com.jar.app.ui.videoplayer
 
 import android.app.Activity
 import android.view.ViewGroup

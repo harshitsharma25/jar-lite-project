@@ -2,5 +2,8 @@
     <string name="app_name">Jar Lite</string>
     <string name="profile">Profile</string>
     <string name="gold_price">Gold price : ₹%1$.2f</string>
+    <string name="gold_price_per_gram">₹%1$.2f/g</string>
+    <string name="gold_price_text">Gold price</string>
+    <string name="amount">₹ %1$d</string>
 
 </resources>

@@ -8,9 +8,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.jar.app.ui.VideoPlayerScreen
 import com.jar.app.ui.auth.SignInScreen
 import com.jar.app.ui.auth.SignUpScreen
+import com.jar.app.ui.goldpricetracker.GoldPriceTrackerScreen
 import com.jar.app.ui.home.HomeScreen
 import com.jar.app.ui.home.HomeScreenViewModel
 import com.jar.app.ui.invest.InvestScreen
@@ -18,6 +18,7 @@ import com.jar.app.ui.nek.NekScreen
 import com.jar.app.ui.profile.ProfileScreen
 import com.jar.app.ui.splash.SplashScreen
 import com.jar.app.ui.transactions.TransactionsScreen
+import com.jar.app.ui.videoplayer.VideoPlayerScreen
 
 @Composable
 fun JarNavigation(viewModel: HomeScreenViewModel = hiltViewModel()){
@@ -69,6 +70,9 @@ fun JarNavigation(viewModel: HomeScreenViewModel = hiltViewModel()){
         }
         composable(route = JarScreens.InvestScreen.name) {
             InvestScreen(navController)
+        }
+        composable(route = JarScreens.GoldPriceTrackerScreen.name) {
+            GoldPriceTrackerScreen(navController)
         }
 
     }
